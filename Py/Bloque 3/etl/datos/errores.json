@@ -1,0 +1,26 @@
+[
+  {
+    "linea": 3,
+    "motivo": "Numero de datos incorrecto"
+  },
+  {
+    "linea": 4,
+    "motivo": "invalid literal for int() with base 10: ''"
+  },
+  {
+    "linea": 5,
+    "motivo": "time data '07/01/2026' does not match format '%Y-%m-%d'"
+  },
+  {
+    "linea": 7,
+    "motivo": "invalid literal for int() with base 10: 'cuatro'"
+  },
+  {
+    "linea": 8,
+    "motivo": "Vendedor nulo"
+  },
+  {
+    "linea": 11,
+    "motivo": "Numero de datos incorrecto"
+  }
+]
