@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
  
-from knn_base import DatosInvalidosError, Dataset, ModeloMayoritario
+from knn_base import DatosInvalidosError, Dataset, ModeloMayoritario, ClasificadorKNN
  
 RUTA_POR_DEFECTO = Path(__file__).parent / "datos" /"iris.csv"
  
@@ -31,8 +31,26 @@ def main(ruta: Path) -> None:
                    if m.clase == clase and p == clase)
         print(f"  {clase:<14}{bien:>4}/{total:<5}{bien / total:>6.0%}")
 
-    print(datos.rangos())
- 
+    clasificadorK1 = ClasificadorKNN(1)
+    
+    clasificadorK3 = ClasificadorKNN(3)
+    
+    clasificadorK5 = ClasificadorKNN(5)
+    
+    clasificadorK7 = ClasificadorKNN(7)
+    
+    clasificadorK11 = ClasificadorKNN(11)
+
+    datos_norm = datos.normalizar(datos.rangos())
+    
+    clasificadorK1.entrenar(datos_norm)
+    prediccion2 = clasificadorK1.predecir(datos_norm)
+    print("\nAcierto por clase:")
+    for clase in datos_norm.clases:
+        total = sum(1 for m in datos_norm if m.clase == clase)
+        bien = sum(1 for m, p in zip(datos_norm, prediccion2)
+                   if m.clase == clase and p == clase)
+        print(f"  {clase:<14}{bien:>4}/{total:<5}{bien / total:>6.0%}")
  
 if __name__ == "__main__":
     ruta = Path(sys.argv[1]) if len(sys.argv) > 1 else RUTA_POR_DEFECTO

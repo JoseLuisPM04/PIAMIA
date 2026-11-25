@@ -83,15 +83,21 @@ class Dataset:
     def rangos(self) -> list[tuple[float, float]]:
         """Mínimo y máximo de cada característica."""
         ...
-        lar_pet = list(c.medidas[2] for c in self.muestras) 
-        an_pet = list(c.medidas[3] for c in self.muestras)
         lar_sep = list(c.medidas[0] for c in self.muestras)
         an_sep = list(c.medidas[1] for c in self.muestras)
-        return [(max(lar_pet), min(lar_pet)), (max(an_pet), min(an_pet)), (max(lar_sep), min(lar_sep)), (max(an_sep), min(an_sep))]
+        lar_pet = list(c.medidas[2] for c in self.muestras) 
+        an_pet = list(c.medidas[3] for c in self.muestras)
+        return [(max(lar_sep), min(lar_sep)), (max(an_sep), min(an_sep)), (max(lar_pet), min(lar_pet)), (max(an_pet), min(an_pet))]
 
     def normalizar(self, rangos: list[tuple[float, float]]) -> "Dataset":
         """Escala cada característica al rango 0-1 con los rangos dados."""
         ...
+        for muestra in self.muestras:
+            muestra.medidas[0] = (muestra.medidas[0] - rangos[0][1])/(rangos[0][0]-rangos[0][1])
+            muestra.medidas[1] = (muestra.medidas[1] - rangos[1][1])/(rangos[1][0]-rangos[1][1])
+            muestra.medidas[2] = (muestra.medidas[2] - rangos[2][1])/(rangos[2][0]-rangos[2][1])
+            muestra.medidas[3] = (muestra.medidas[3] - rangos[3][1])/(rangos[3][0]-rangos[3][1])
+        return self 
 
     def resumen_por_clase(self) -> dict[str, dict[str, float]]:
         """Estadísticas básicas por clase (reutiliza el proyecto 1)."""
@@ -166,10 +172,10 @@ class ClasificadorKNN(Modelo):
 
     def _votar(self, muestra: Muestra) -> str:
         vecinos = sorted(
-            self._entrenamiento,
-            key=lambda m: self.distancia(muestra.medidas, m.medidas),
-        )[: self.k]
-        ...
+            enumerate(self._entrenamiento),
+            key=lambda item: (self.distancia(muestra.medidas, item[1].medidas), item[0])
+        )
+        return vecinos
 
     def predecir(self, muestras) -> list[str]:
         if self._entrenamiento is None:
